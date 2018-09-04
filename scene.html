@@ -68,8 +68,7 @@ $(function () {
     // add the plane to the scene
     scene.add(plane);
 
-    // create a cube
-	
+
 
     var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
 
@@ -343,8 +342,15 @@ $(function () {
     spotLight.target = plane;
     spotLight.distance = 0;
 
-
     scene.add(spotLight);
+
+    var light = new THREE.DirectionalLight( 0xffffff, 1 );
+    light.position = camera.position;
+    scene.add(light);
+
+    controls.addEventListener( 'change', light_update ); // wraz ze zmianą kamery, zmienia się oświetlenie
+
+
 
     // add the output of the renderer to the html element
     $("#WebGL-output").append(renderer.domElement);
@@ -357,10 +363,14 @@ $(function () {
     var phase = 0;
 
 
+    function light_update(){
+        light.position.copy( camera.position );
+    }
+
     function render() {
         stats.update();
         requestAnimationFrame(render);
-       // controls.update();
+        controls.update();
         renderer.render(scene, camera);
 
     }
