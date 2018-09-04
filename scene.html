@@ -8,6 +8,7 @@
     <script type="text/javascript" src="scripts/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="scripts/stats.js"></script>
     <script type="text/javascript" src="scripts/dat.gui.js"></script>
+	<script type="text/javascript" src="scripts/OrbitControls.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -33,23 +34,25 @@ $(function () {
 
     var stopMovingLight = false;
 
-	var $container = $('#container');
     var stats = initStats();
-
-    // create a scene, that will hold all our elements such as objects, cameras and lights.
-    var scene = new THREE.Scene();
-
-    // create a camera, which defines where we're looking at.
-    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // create a render and set the size
     var renderer = new THREE.WebGLRenderer();
 
     renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
     renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild( renderer.domElement );
     renderer.shadowMapEnabled = true;
 
-	$container.append(renderer.domElement);
+    // create a scene, that will hold all our elements such as objects, cameras and lights.
+    var scene = new THREE.Scene();
+
+    // create a camera, which defines where we're looking at.
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var controls = new THREE.OrbitControls( camera );
+
+
+
     // create the ground plane
     var planeGeometry = new THREE.PlaneGeometry(280,280, 20, 20);
     var planeMaterial = new THREE.MeshLambertMaterial({color: 0xfbfbfb});
@@ -69,13 +72,7 @@ $(function () {
 	
 
     var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
-    //var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x00c0c0});
-	//var texture = THREE.ImageUtils.loadTexture( "red.jpg");
-	//texture.needsUpdate = true;
-	//var cubeMaterial1 = new THREE.MeshPhongMaterial( {color: 0x3c3c3c, map: texture});
 
-   
- 
             var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
             var cubeMaterial = new THREE.MeshPhongMaterial();
             cubeMaterial.map = texture;
@@ -327,7 +324,7 @@ $(function () {
     camera.position.y = -300;
     camera.position.z = 250;
     camera.lookAt(new THREE.Vector3(10, 0, 0));
-
+    //controls.update();
 
 
     // add spotlight for a bit of light
@@ -362,9 +359,10 @@ $(function () {
 
     function render() {
         stats.update();
-          renderer.render(scene, camera);
-
         requestAnimationFrame(render);
+       // controls.update();
+        renderer.render(scene, camera);
+
     }
 
     render();
