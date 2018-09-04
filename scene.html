@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Lab 04.03 - Spot Light</title>
+    <script type="text/javascript" src="three.js"></script>
+    <script type="text/javascript" src="jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="stats.js"></script>
+    <script type="text/javascript" src="dat.gui.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript">
+
+// once everything is loaded, we run our Three.js stuff.
+
+$(function () {
+
+    var stopMovingLight = false;
+
+	var $container = $('#container');
+    var stats = initStats();
+
+    // create a scene, that will hold all our elements such as objects, cameras and lights.
+    var scene = new THREE.Scene();
+
+    // create a camera, which defines where we're looking at.
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    // create a render and set the size
+    var renderer = new THREE.WebGLRenderer();
+
+    renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMapEnabled = true;
+
+	$container.append(renderer.domElement);
+    // create the ground plane
+    var planeGeometry = new THREE.PlaneGeometry(280,280, 20, 20);
+    var planeMaterial = new THREE.MeshLambertMaterial({color: 0xfbfbfb});
+    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.receiveShadow = true;
+
+    // rotate and position the plane
+    //plane.rotation.x = -0.5 * Math.PI;
+    plane.position.x = 0
+    plane.position.y = 0
+    plane.position.z = 0
+
+    // add the plane to the scene
+    scene.add(plane);
+
+    // create a cube
+	
+
+    var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
+    //var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x00c0c0});
+	//var texture = THREE.ImageUtils.loadTexture( "red.jpg");
+	//texture.needsUpdate = true;
+	//var cubeMaterial1 = new THREE.MeshPhongMaterial( {color: 0x3c3c3c, map: texture});
+
+   
+ 
+            var texture = THREE.ImageUtils.loadTexture("wall2.jpg");
+            var cubeMaterial = new THREE.MeshPhongMaterial();
+            cubeMaterial.map = texture;
+
+  
+
+    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);;
+
+    cube.position.x = 120;
+    cube.position.y = 120;
+    cube.position.z = 20;
+
+    scene.add(cube);
+	
+	var cube1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube1.position.x = 120;
+    cube1.position.y = 80;
+    cube1.position.z = 20;
+
+    scene.add(cube1);
+	
+
+    var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube2.position.x = 120;
+    cube2.position.y = 0;
+    cube2.position.z = 20;
+
+    scene.add(cube2);
+	
+
+
+    var cube3 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube3.position.x = 120;
+    cube3.position.y = -40;
+    cube3.position.z = 20;
+
+    scene.add(cube3);
+
+    var cube4 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube4.position.x = 120;
+    cube4.position.y = -80;
+    cube4.position.z = 20;
+
+    scene.add(cube4);
+	
+	var cube5 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube5.position.x = 120;
+    cube5.position.y = -120;
+    cube5.position.z = 20;
+
+    scene.add(cube5);
+	
+	var cube6 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube6.position.x = 80;
+    cube6.position.y = -120;
+    cube6.position.z = 20;
+
+    scene.add(cube6);
+	
+	
+	var cube7 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube7.position.x = 40;
+    cube7.position.y = -120;
+    cube7.position.z = 20;
+
+    scene.add(cube7);
+	
+	
+	var cube8 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube8.position.x = -40;
+    cube8.position.y = -120;
+    cube8.position.z = 20;
+
+    scene.add(cube8);
+	
+	
+	var cube9 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube9.position.x = -80;
+    cube9.position.y = -120;
+    cube9.position.z = 20;
+
+    scene.add(cube9);
+	
+	var cube10 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube10.position.x = -120;
+    cube10.position.y = -120;
+    cube10.position.z = 20;
+
+    scene.add(cube10);
+
+	var cube11 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube11.position.x = -120;
+    cube11.position.y = -80;
+    cube11.position.z = 20;
+
+    scene.add(cube11);
+	
+	var cube12 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube12.position.x = -120;
+    cube12.position.y = -40;
+    cube12.position.z = 20;
+
+    scene.add(cube12);
+	
+	var cube13 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube13.position.x = -120;
+    cube13.position.y = 0;
+    cube13.position.z = 20;
+
+    scene.add(cube13);
+	
+	var cube14 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube14.position.x = -120;
+    cube14.position.y = 40;
+    cube14.position.z = 20;
+
+    scene.add(cube14);
+	
+	var cube15 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube15.position.x = -120;
+    cube15.position.y = 80;
+    cube15.position.z = 20;
+
+    scene.add(cube15);
+	
+	var cube16 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube16.position.x = -120;
+    cube16.position.y = 120;
+    cube16.position.z = 20;
+
+    scene.add(cube16);
+	
+	var cube17 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube17.position.x = -40;
+    cube17.position.y = 120;
+    cube17.position.z = 20;
+
+    scene.add(cube17);
+	
+	var cube18 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube18.position.x = 0;
+    cube18.position.y = 120;
+    cube18.position.z = 20;
+
+    scene.add(cube18);
+	
+	var cube19 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube19.position.x = 40;
+    cube19.position.y = 120;
+    cube19.position.z = 20;
+
+    scene.add(cube19);
+	
+	var cube20 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube20.position.x = 80;
+    cube20.position.y = 120;
+    cube20.position.z = 20;
+
+    scene.add(cube20);
+	
+	var cube21 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube21.position.x = -80;
+    cube21.position.y = 40;
+    cube21.position.z = 20;
+
+    scene.add(cube21);
+	
+	var cube22 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube22.position.x = -40;
+    cube22.position.y = 40;
+    cube22.position.z = 20;
+
+    scene.add(cube22);
+	
+	var cube23 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube23.position.x = 0;
+    cube23.position.y = 40;
+    cube23.position.z = 20;
+
+    scene.add(cube23);
+	
+	var cube24 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube24.position.x = 40;
+    cube24.position.y = 40;
+    cube24.position.z = 20;
+
+    scene.add(cube24);
+	
+	var cube25 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube25.position.x = 40;
+    cube25.position.y = 0;
+    cube25.position.z = 20;
+
+    scene.add(cube25);
+
+	
+	var cube26 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube26.position.x = 40;
+    cube26.position.y = -40;
+    cube26.position.z = 20;
+
+    scene.add(cube26);
+	
+	var cube27 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube27.position.x = 0;
+    cube27.position.y = -40;
+    cube27.position.z = 20;
+
+    scene.add(cube27);
+	
+	var cube28 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube28.position.x = -40;
+    cube28.position.y = -40;
+    cube28.position.z = 20;
+
+    scene.add(cube28);
+
+
+ /*   var sphereGeometry = new THREE.SphereGeometry(20, 20, 20);
+    var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
+    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+    // position the sphere
+    sphere.position.x = 20;
+    sphere.position.y = 0;
+    sphere.position.z = 2;
+    sphere.castShadow = true;
+
+    // add the sphere to the scene
+    scene.add(sphere);*/
+
+    // position and point the camera to the center of the scene
+    camera.position.x = 10;
+    camera.position.y = -300;
+    camera.position.z = 250;
+    camera.lookAt(new THREE.Vector3(10, 0, 0));
+
+   /* // add subtle ambient lighting
+    var ambiColor = "#1c1c1c";
+    var ambientLight = new THREE.AmbientLight(ambiColor);
+    scene.add(ambientLight);*/
+
+    // add spotlight for a bit of light
+    var spotLight0 = new THREE.SpotLight(0xffffff);
+    spotLight0.position.set(0,0,600);
+    spotLight0.lookAt(plane);
+    scene.add(spotLight0);
+
+    var pointColor = "#000000";
+    var spotLight = new THREE.SpotLight(pointColor);
+    spotLight.position.set(0,300,10);
+    spotLight.castShadow = true;
+    spotLight.shadowCameraNear = 2;
+    spotLight.shadowCameraFar = 200;
+    spotLight.shadowCameraFov = 130;
+    spotLight.target = plane;
+    spotLight.distance = 0;
+
+
+    scene.add(spotLight);
+
+    // add the output of the renderer to the html element
+    $("#WebGL-output").append(renderer.domElement);
+
+    // call the render function
+    var step = 0;
+
+    // used to determine the switch point for the light animation
+    var invert = 1;
+    var phase = 0;
+
+
+    function render() {
+        stats.update();
+          renderer.render(scene, camera);
+
+        requestAnimationFrame(render);
+    }
+
+    render();
+	
+    function initStats() {
+
+        var stats = new Stats();
+
+        stats.setMode(0); // 0: fps, 1: ms
+
+        // Align top-left
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+
+        $("#Stats-output").append(stats.domElement);
+
+        return stats;
+    }
+});
+
+
+</script>
+</body>
+</html>
+
+
+
+/*var coneGeom =  new THREE.CylinderGeometry( 0, 100, 100, 3 ); // radius, segmentsWidth, segmentsHeight
+	mirrorConeCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
+	// mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+	scene.add( mirrorSphereCamera );
+	var mirrorConeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorConeCamera.renderTarget } );
+	mirrorCone = new THREE.Mesh( coneGeom, mirrorConeMaterial );
+	mirrorCone.position.set(0,50,150);
+	mirrorConeCamera.position = mirrorCone.position;
+	scene.add(mirrorCone);*/
