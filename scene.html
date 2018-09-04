@@ -3,12 +3,14 @@
 <html>
 
 <head>
-    <title>Lab 04.03 - Spot Light</title>
+    <title>Bou</title>
     <script type="text/javascript" src="scripts/three.js"></script>
     <script type="text/javascript" src="scripts/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="scripts/stats.js"></script>
     <script type="text/javascript" src="scripts/dat.gui.js"></script>
 	<script type="text/javascript" src="scripts/OrbitControls.js"></script>
+    <script type="text/javascript" src="scripts/Detector.js"></script>
+    <script type="text/javascript" src="scripts/stats.min.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -49,30 +51,39 @@ $(function () {
 
     // create a camera, which defines where we're looking at.
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
     var controls = new THREE.OrbitControls( camera );
 
-
+    var maxAnisotropy = 5;
 
     // create the ground plane
+    var floorTexture = new THREE.ImageUtils.loadTexture( 'textures/wall.png' );
+    floorTexture.anisotropy = maxAnisotropy;
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(32,32);
+    floorTexture.needsUpdate = true;
+    var planeMaterial = new THREE.MeshPhongMaterial({map: floorTexture, side:THREE.DoubleSide})
     var planeGeometry = new THREE.PlaneGeometry(280,280, 20, 20);
-    var planeMaterial = new THREE.MeshLambertMaterial({color: 0xfbfbfb});
     var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.receiveShadow = true;
+   // plane.receiveShadow = true;
 
     // rotate and position the plane
-    //plane.rotation.x = -0.5 * Math.PI;
-    plane.position.x = 0
+  //  plane.rotation.x = 0.5 * Math.PI;
+   // plane.position.x = 0
     plane.position.y = 0
-    plane.position.z = 0
+   // plane.position.z = 0
 
     // add the plane to the scene
     scene.add(plane);
 
 
-
     var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
 
             var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(4,4);
             var cubeMaterial = new THREE.MeshPhongMaterial();
             cubeMaterial.map = texture;
 
@@ -330,7 +341,7 @@ $(function () {
     var spotLight0 = new THREE.SpotLight(0xffffff);
     spotLight0.position.set(0,0,600);
     spotLight0.lookAt(plane);
-    scene.add(spotLight0);
+   // scene.add(spotLight0);
 
     var pointColor = "#000000";
     var spotLight = new THREE.SpotLight(pointColor);
@@ -342,14 +353,13 @@ $(function () {
     spotLight.target = plane;
     spotLight.distance = 0;
 
-    scene.add(spotLight);
+  //  scene.add(spotLight);
 
     var light = new THREE.DirectionalLight( 0xffffff, 1 );
     light.position = camera.position;
     scene.add(light);
 
     controls.addEventListener( 'change', light_update ); // wraz ze zmianą kamery, zmienia się oświetlenie
-
 
 
     // add the output of the renderer to the html element
@@ -372,7 +382,6 @@ $(function () {
         requestAnimationFrame(render);
         controls.update();
         renderer.render(scene, camera);
-
     }
 
     render();
