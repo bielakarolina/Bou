@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="scripts/OrbitControls.js"></script>
     <script type="text/javascript" src="scripts/Detector.js"></script>
     <script type="text/javascript" src="scripts/stats.min.js"></script>
+    <script type="text/javascript" src="scripts/KeyboardState.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -20,6 +21,9 @@
     </style>
 </head>
 <body>
+
+<div id="message"></div>
+
 
 <div id="Stats-output">
 </div>
@@ -35,8 +39,10 @@
 $(function () {
 
     var stopMovingLight = false;
-
+    var keyboard = new KeyboardState();
+    var clock = new THREE.Clock();
     var stats = initStats();
+    var collidableMeshList = [];
 
     // create a render and set the size
     var renderer = new THREE.WebGLRenderer();
@@ -52,12 +58,12 @@ $(function () {
     // create a camera, which defines where we're looking at.
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    var controls = new THREE.OrbitControls( camera );
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     var maxAnisotropy = 5;
 
     // create the ground plane
-    var floorTexture = new THREE.ImageUtils.loadTexture( 'textures/wall.png' );
+    var floorTexture = new THREE.ImageUtils.loadTexture( 'textures/wall1.png' );
     floorTexture.anisotropy = maxAnisotropy;
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
@@ -76,6 +82,13 @@ $(function () {
 
     // add the plane to the scene
     scene.add(plane);
+
+    var geometry = new THREE.SphereGeometry( 8, 8, 8 );
+    var material = new THREE.MeshLambertMaterial( { color: 0x0000ff } );
+    mesh = new THREE.Mesh( geometry, material );
+    mesh.position.set(4,4,10);
+    scene.add(mesh);
+
 
 
     var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
@@ -96,14 +109,16 @@ $(function () {
     cube.position.z = 20;
 
     scene.add(cube);
-	
+    collidableMeshList.push(cube);
+
+
 	var cube1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube1.position.x = 120;
     cube1.position.y = 80;
     cube1.position.z = 20;
 
     scene.add(cube1);
-	
+    collidableMeshList.push(cube1);
 
     var cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -112,7 +127,7 @@ $(function () {
     cube2.position.z = 20;
 
     scene.add(cube2);
-	
+    collidableMeshList.push(cube2);
 
 
     var cube3 = new THREE.Mesh(cubeGeometry, cubeMaterial);
@@ -122,6 +137,7 @@ $(function () {
     cube3.position.z = 20;
 
     scene.add(cube3);
+    collidableMeshList.push(cube3);
 
     var cube4 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -130,6 +146,7 @@ $(function () {
     cube4.position.z = 20;
 
     scene.add(cube4);
+    collidableMeshList.push(cube4);
 	
 	var cube5 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -138,6 +155,7 @@ $(function () {
     cube5.position.z = 20;
 
     scene.add(cube5);
+    collidableMeshList.push(cube5);
 	
 	var cube6 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -146,7 +164,7 @@ $(function () {
     cube6.position.z = 20;
 
     scene.add(cube6);
-	
+    collidableMeshList.push(cube6);
 	
 	var cube7 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -155,7 +173,7 @@ $(function () {
     cube7.position.z = 20;
 
     scene.add(cube7);
-	
+    collidableMeshList.push(cube7);
 	
 	var cube8 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -164,7 +182,7 @@ $(function () {
     cube8.position.z = 20;
 
     scene.add(cube8);
-	
+    collidableMeshList.push(cube8);
 	
 	var cube9 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -173,7 +191,8 @@ $(function () {
     cube9.position.z = 20;
 
     scene.add(cube9);
-	
+    collidableMeshList.push(cube9);
+
 	var cube10 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube10.position.x = -120;
@@ -181,6 +200,7 @@ $(function () {
     cube10.position.z = 20;
 
     scene.add(cube10);
+    collidableMeshList.push(cube10);
 
 	var cube11 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -189,7 +209,8 @@ $(function () {
     cube11.position.z = 20;
 
     scene.add(cube11);
-	
+    collidableMeshList.push(cube11);
+
 	var cube12 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube12.position.x = -120;
@@ -197,104 +218,105 @@ $(function () {
     cube12.position.z = 20;
 
     scene.add(cube12);
-	
-	var cube13 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    collidableMeshList.push(cube12);
+
+    var cube13 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube13.position.x = -120;
     cube13.position.y = 0;
     cube13.position.z = 20;
 
     scene.add(cube13);
-	
-	var cube14 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube14 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube14.position.x = -120;
     cube14.position.y = 40;
     cube14.position.z = 20;
 
     scene.add(cube14);
-	
-	var cube15 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube15 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube15.position.x = -120;
     cube15.position.y = 80;
     cube15.position.z = 20;
 
     scene.add(cube15);
-	
-	var cube16 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube16 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube16.position.x = -120;
     cube16.position.y = 120;
     cube16.position.z = 20;
 
     scene.add(cube16);
-	
-	var cube17 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube17 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube17.position.x = -40;
     cube17.position.y = 120;
     cube17.position.z = 20;
 
     scene.add(cube17);
-	
-	var cube18 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube18 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube18.position.x = 0;
     cube18.position.y = 120;
     cube18.position.z = 20;
 
     scene.add(cube18);
-	
-	var cube19 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube19 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube19.position.x = 40;
     cube19.position.y = 120;
     cube19.position.z = 20;
 
     scene.add(cube19);
-	
-	var cube20 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube20 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube20.position.x = 80;
     cube20.position.y = 120;
     cube20.position.z = 20;
 
     scene.add(cube20);
-	
-	var cube21 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube21 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube21.position.x = -80;
     cube21.position.y = 40;
     cube21.position.z = 20;
 
     scene.add(cube21);
-	
-	var cube22 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube22 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube22.position.x = -40;
     cube22.position.y = 40;
     cube22.position.z = 20;
 
     scene.add(cube22);
-	
-	var cube23 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube23 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube23.position.x = 0;
     cube23.position.y = 40;
     cube23.position.z = 20;
 
     scene.add(cube23);
-	
-	var cube24 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube24 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube24.position.x = 40;
     cube24.position.y = 40;
     cube24.position.z = 20;
 
     scene.add(cube24);
-	
-	var cube25 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube25 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube25.position.x = 40;
     cube25.position.y = 0;
@@ -302,24 +324,24 @@ $(function () {
 
     scene.add(cube25);
 
-	
-	var cube26 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube26 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube26.position.x = 40;
     cube26.position.y = -40;
     cube26.position.z = 20;
 
     scene.add(cube26);
-	
-	var cube27 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube27 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube27.position.x = 0;
     cube27.position.y = -40;
     cube27.position.z = 20;
 
     scene.add(cube27);
-	
-	var cube28 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    var cube28 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
     cube28.position.x = -40;
     cube28.position.y = -40;
@@ -382,10 +404,81 @@ $(function () {
         requestAnimationFrame(render);
         controls.update();
         renderer.render(scene, camera);
+        update();
     }
 
     render();
-	
+
+    function collisiondetector(distanceX, distanceY){
+        var collision=0;
+        var originPoint = mesh.position.clone();
+        clearText();
+        var newposition= new Three.Vector3(distanceX,distanceY,0);
+
+        for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++)
+        {
+            var localVertex = mesh.geometry.vertices[vertexIndex].clone();
+            var globalVertex = localVertex.applyMatrix4( mesh.matrix );
+            var directionVector = globalVertex.sub( mesh.position);
+
+            var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+            var collisionResults = ray.intersectObjects( collidableMeshList );
+            if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
+                appendText(" Hit ");
+                collision=1;
+
+            }
+        }
+        return collision;
+    }
+
+    function update()
+    {
+        keyboard.update();
+
+        var moveDistance = 50 * clock.getDelta();
+
+        if ( keyboard.down("left") && collision==0)
+            mesh.translateX( -10 );
+
+        if ( keyboard.down("right") && collision==0)
+            mesh.translateX(  10 );
+
+        if ( keyboard.down("up") && collision==0)
+            mesh.translateY(  10 );
+
+        if ( keyboard.down("down") && collision==0)
+            mesh.translateY(  -10 );
+
+        if ( keyboard.pressed("A") && collision==0)
+            mesh.translateX( -moveDistance );
+
+        if ( keyboard.pressed("D") && collision==0)
+            mesh.translateX(  moveDistance );
+
+        if ( keyboard.pressed("W")&& collision==0 )
+            mesh.translateY(  moveDistance );
+
+        if ( keyboard.pressed("S") && collision==0)
+            mesh.translateY(  -moveDistance );
+
+        if ( keyboard.down("R") )
+            mesh.material.color = new THREE.Color(0xff0000);
+        if ( keyboard.up("R") )
+            mesh.material.color = new THREE.Color(0x0000ff);
+
+        controls.update();
+        stats.update();
+    }
+
+
+    function clearText()
+    {   document.getElementById('message').innerHTML = '..........';   }
+    function appendText(txt)
+    {   document.getElementById('message').innerHTML += txt;   }
+
+
+
     function initStats() {
 
         var stats = new Stats();
