@@ -409,27 +409,32 @@ $(function () {
 
     render();
 
-    function collisiondetector(distanceX, distanceY){
+    function collisionDetector(distanceX, distanceY){
         var collision=0;
         var originPoint = mesh.position.clone();
         clearText();
-        var newposition= new Three.Vector3(distanceX,distanceY,0);
+        //var newposition= new Three.Vector3(distanceX,distanceY,0);
 
         for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++)
         {
-            var localVertex = mesh.geometry.vertices[vertexIndex].clone();
+            if(distanceY==0)
+                var localVertex = mesh.geometry.vertices[vertexIndex].clone().setX(distanceX);
+            else
+                var localVertex = mesh.geometry.vertices[vertexIndex].clone().setY(distanceY);
             var globalVertex = localVertex.applyMatrix4( mesh.matrix );
-            var directionVector = globalVertex.sub( mesh.position);
+            var directionVector = (globalVertex.sub( mesh.position));
 
             var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
             var collisionResults = ray.intersectObjects( collidableMeshList );
             if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
                 appendText(" Hit ");
-                collision=1;
+                return 1;
+                //mesh.position=originPoint;
 
             }
         }
-        return collision;
+        appendText(" DUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUPPPPPPPPPPPPPPPPPPPPAAAAAAAAAAAAAAAAAA ");
+        return 0;
     }
 
     function update()
@@ -438,29 +443,37 @@ $(function () {
 
         var moveDistance = 50 * clock.getDelta();
 
-        if ( keyboard.down("left") && collision==0)
-            mesh.translateX( -10 );
+        if ( keyboard.down("left"))
+            if((collisionDetector(-10,0))==0)
+                mesh.translateX( -10 );
 
-        if ( keyboard.down("right") && collision==0)
-            mesh.translateX(  10 );
+        if ( keyboard.down("right") )
+            if((collisionDetector(10,0))==0)
+                mesh.translateX(  10 );
 
-        if ( keyboard.down("up") && collision==0)
-            mesh.translateY(  10 );
+        if ( keyboard.down("up") )
+            if((collisionDetector(0,10))==0)
+                mesh.translateY(  10 );
 
-        if ( keyboard.down("down") && collision==0)
-            mesh.translateY(  -10 );
+        if ( keyboard.down("down") )
+            if((collisionDetector(0,-10))==0)
+                mesh.translateY(  -10 );
 
-        if ( keyboard.pressed("A") && collision==0)
-            mesh.translateX( -moveDistance );
+        if ( keyboard.pressed("A") )
+            if((collisionDetector(-moveDistance,0))==0)
+                mesh.translateX( -moveDistance );
 
-        if ( keyboard.pressed("D") && collision==0)
-            mesh.translateX(  moveDistance );
+        if ( keyboard.pressed("D") )
+            if((collisionDetector(moveDistance,0))==0)
+                mesh.translateX(  moveDistance );
 
-        if ( keyboard.pressed("W")&& collision==0 )
-            mesh.translateY(  moveDistance );
+        if ( keyboard.pressed("W"))
+            if((collisionDetector(0,moveDistance))==0)
+                mesh.translateY(  moveDistance );
 
-        if ( keyboard.pressed("S") && collision==0)
-            mesh.translateY(  -moveDistance );
+        if ( keyboard.pressed("S") )
+            if((collisionDetector(0,-moveDistance))==0)
+                mesh.translateY(  -moveDistance );
 
         if ( keyboard.down("R") )
             mesh.material.color = new THREE.Color(0xff0000);
