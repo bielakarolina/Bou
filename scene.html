@@ -7,11 +7,14 @@
     <script type="text/javascript" src="scripts/three.js"></script>
     <script type="text/javascript" src="scripts/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="scripts/stats.js"></script>
+    <script type="text/javascript" src="scripts/3MFLoader.js"></script>
     <script type="text/javascript" src="scripts/dat.gui.js"></script>
-    <script type="text/javascript" src="scripts/OrbitControls.js"></script>
     <script type="text/javascript" src="scripts/Detector.js"></script>
-    <script type="text/javascript" src="scripts/stats.min.js"></script>
+    <script type="text/javascript" src="scripts/OrbitControls.js"></script>
     <script type="text/javascript" src="scripts/KeyboardState.js"></script>
+    <script type="text/javascript" src="scripts/jszip.min.js"></script>
+
+
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -33,6 +36,8 @@
 
 <!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
+
+    if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
     // once everything is loaded, we run our Three.js stuff.
 
@@ -61,13 +66,44 @@
         var controls = new THREE.OrbitControls( camera);
 
         var maxAnisotropy = 5;
+        var manager = new THREE.LoadingManager();
+
+
+
+        // var loadOBJ = function() {
+        //     //Manager from ThreeJs to track a loader and its status
+        //     //var manager = new THREE.LoadingManager();
+        //     //Loader for Obj from Three.js
+        //     var loader = new THREE.ThreeMFLoader();
+        //
+        //     //Launch loading of the obj file, addBananaInScene is the callback when it's ready
+        //     loader.load("./textures/do.3mf", function(object) {
+        //         banana = object;
+        //         //Move the banana in the scene
+        //         banana.position.y = 0;
+        //         banana.position.z = 0;
+        //         //Go through all children of the loaded object and search for a Mesh
+        //         object.traverse(function(child) {
+        //             //This allow us to check if the children is an instance of the Mesh constructor
+        //             if (child instanceof THREE.Mesh) {
+        //                 //Sometimes there are some vertex normals missing in the .obj files, ThreeJs will compute them
+        //                 child.geometry.computeVertexNormals();
+        //             }
+        //         });
+        //
+        //         scene.add(banana);
+        //         render();
+        //     });
+        // };
+        //
+        // loadOBJ();
 
         // create the ground plane
         var floorTexture = new THREE.ImageUtils.loadTexture( 'textures/wall1.png' );
         floorTexture.anisotropy = maxAnisotropy;
         floorTexture.wrapS = THREE.RepeatWrapping;
         floorTexture.wrapT = THREE.RepeatWrapping;
-        floorTexture.repeat.set(32,32);
+        floorTexture.repeat.set(16,16);
         floorTexture.needsUpdate = true;
 
         var planeMaterial = new THREE.MeshPhongMaterial({map: floorTexture, side:THREE.DoubleSide})
@@ -524,7 +560,6 @@
 
                 }
             }
-            appendText(" DUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUPPPPPPPPPPPPPPPPPPPPAAAAAAAAAAAAAAAAAA ");
             return 0;
         }
 
