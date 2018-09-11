@@ -4,7 +4,13 @@
 
 <head>
     <title>Bou</title>
+    <script type="text/javascript" src="scripts/three.min.js"></script>
+
     <script type="text/javascript" src="scripts/three.js"></script>
+
+    <script src="scripts/Projector.js"></script>
+    <script src="scripts/CanvasRenderer.js"></script>
+
     <script type="text/javascript" src="scripts/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="scripts/stats.js"></script>
     <script type="text/javascript" src="scripts/3MFLoader.js"></script>
@@ -13,6 +19,7 @@
     <script type="text/javascript" src="scripts/OrbitControls.js"></script>
     <script type="text/javascript" src="scripts/KeyboardState.js"></script>
     <script type="text/javascript" src="scripts/jszip.min.js"></script>
+    <script src="scripts/GLTFLoader.js"></script>
 
 
     <style>
@@ -38,22 +45,59 @@
 <script type="text/javascript">
     if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
     // once everything is loaded, we run our Three.js stuff.
+    var renderer;
+    var mixers = [];
+
     $(function () {
         var stopMovingLight = false;
         var keyboard = new KeyboardState();
         var clock = new THREE.Clock();
-        var stats = initStats();
+
         var collidableMeshList = [];
         // create a render and set the size
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild( renderer.domElement );
-        renderer.shadowMapEnabled = true;
-        // create a scene, that will hold all our elements such as objects, cameras and lights.
+
+        var stats = initStats();
+
         var scene = new THREE.Scene();
         // create a camera, which defines where we're looking at.
+
+
+        // loader = new THREE.BufferGeometryLoader();
+        // loader.load( 'textures/suzanne_buffergeometry.json', function ( geometry ) {
+        //     mesh1 = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xffffff, overdraw: 0.5 } ) );
+        //     mesh1.position.set(4,4,20);
+        //     scene.add( mesh1 );
+        // } );
+
+        // var renderer = new THREE.WebGLRenderer();
+        // renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        // renderer.setSize(window.innerWidth, window.innerHeight);
+        // document.body.appendChild( renderer.domElement );
+        // renderer.shadowMapEnabled = true;
+
+
+        // var loader = new THREE.GLTFLoader();
+        // loader.load( 'textures/Parrot.glb', function( gltf ) {
+        //     var mesh1 = gltf.scene.children[ 0 ];
+        //     //var s = 0.35;
+        //     //mesh1.scale.set( s, s, s );
+        //     mesh1.position.y = 15;
+        //     mesh1.position.x = 15;
+        //     scene.add( mesh1 );
+        // } );
+
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+       // renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+        renderer.gammaInput = true;
+        renderer.gammaOutput = true;
+        renderer.shadowMapEnabled = true;
+
+
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
 
         var controls = new THREE.OrbitControls( camera, renderer.domElement );
        // controls.addEventListener( 'change', render );
@@ -383,6 +427,13 @@
         //controls.update();
         // add spotlight for a bit of light
 
+
+        var light1 = new THREE.PointLight( 0xff0040, 1, 50 );
+        light1.position.x =0;
+        light1.position.y =0;
+        light1.position.z =30;
+        scene.add( light1 );
+
         var spotLight0 = new THREE.SpotLight(0xffffff);
         spotLight0.position.set(0,0,600);
         spotLight0.lookAt(plane);
@@ -422,6 +473,8 @@
         var speed = 0.02;
 
         function render() {
+            var delta = clock.getDelta();
+
             stats.update();
             // rotate the cube around its axes
             shape.rotation.z += speed;
@@ -448,6 +501,11 @@
             shape8.position.z = 30 + ( 5 * (Math.cos(step)));
             shape9.position.z = 30 + ( 5 * (Math.cos(step)));
             shape.position.z = 30 + ( 5 * (Math.cos(step)));
+
+            for ( var i = 0; i < mixers.length; i ++ ) {
+                mixers[ i ].update( delta );
+            }
+
             stats.update();
             requestAnimationFrame(render);
             controls.update();
@@ -484,7 +542,7 @@
         function update()
         {
             keyboard.update();
-            var moveDistance = 50 * clock.getDelta();
+            var moveDistance = 1000 * clock.getDelta();
             if ( keyboard.down("left"))
                 if((collisionDetector(-18,0))==0)
                     mesh.translateX( -10 );
