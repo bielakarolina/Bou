@@ -36,67 +36,37 @@
 
 <!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
-
     if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
-
     // once everything is loaded, we run our Three.js stuff.
-
     $(function () {
-
         var stopMovingLight = false;
         var keyboard = new KeyboardState();
         var clock = new THREE.Clock();
         var stats = initStats();
         var collidableMeshList = [];
-
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
-
         renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild( renderer.domElement );
         renderer.shadowMapEnabled = true;
-
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
-
         // create a camera, which defines where we're looking at.
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 
-        var controls = new THREE.OrbitControls( camera);
+        var controls = new THREE.OrbitControls( camera, renderer.domElement );
+       // controls.addEventListener( 'change', render );
+       //  controls.minDistance = 50;
+       //  controls.maxDistance = 300;
+       //  controls.enablePan = false;
+       //  controls.target.set( 80, 65, 20 );
+        // controls.update();
+
 
         var maxAnisotropy = 5;
         var manager = new THREE.LoadingManager();
 
-
-
-        // var loadOBJ = function() {
-        //     //Manager from ThreeJs to track a loader and its status
-        //     //var manager = new THREE.LoadingManager();
-        //     //Loader for Obj from Three.js
-        //     var loader = new THREE.ThreeMFLoader();
-        //
-        //     //Launch loading of the obj file, addBananaInScene is the callback when it's ready
-        //     loader.load("./textures/do.3mf", function(object) {
-        //         banana = object;
-        //         //Move the banana in the scene
-        //         banana.position.y = 0;
-        //         banana.position.z = 0;
-        //         //Go through all children of the loaded object and search for a Mesh
-        //         object.traverse(function(child) {
-        //             //This allow us to check if the children is an instance of the Mesh constructor
-        //             if (child instanceof THREE.Mesh) {
-        //                 //Sometimes there are some vertex normals missing in the .obj files, ThreeJs will compute them
-        //                 child.geometry.computeVertexNormals();
-        //             }
-        //         });
-        //
-        //         scene.add(banana);
-        //         render();
-        //     });
-        // };
-        //
-        // loadOBJ();
 
         // create the ground plane
         var floorTexture = new THREE.ImageUtils.loadTexture( 'textures/wall1.png' );
@@ -119,24 +89,20 @@
         scene.add(mesh);
 
 
-
         var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
-
         var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(8,8);
+
         var cubeMaterial = new THREE.MeshPhongMaterial();
         cubeMaterial.map = texture;
 
-
         var collidableMeshList = [];
-
 
         var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff , roughness: 0} );
         var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xb3b3b3, wireframe: true} );
         var multiMaterial = [ darkMaterial, wireframeMaterial ];
-
 
         var cubeGeometry1 = new THREE.CubeGeometry(64,64,64);
         var cubeGeometry2 = new THREE.CubeGeometry(64,128,64);
@@ -146,34 +112,28 @@
         var cubeGeometry6 = new THREE.CubeGeometry(64,384,64);
         var cubeGeometry11= new THREE.CubeGeometry(64,704,64);
         var cubeGeometry15= new THREE.CubeGeometry(64,960,64);
-
         var cubeGeometry02= new THREE.CubeGeometry(128,64,64);
         var cubeGeometry03= new THREE.CubeGeometry(192,64,64);
         var cubeGeometry06= new THREE.CubeGeometry(384,64,64);
         var cubeGeometry013= new THREE.CubeGeometry(832,64,64);
 
+        var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(8,8);
 
+        var cubeMaterial = new THREE.MeshPhongMaterial();
+        cubeMaterial.map = texture;
 
         var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(8,8);
+
         var cubeMaterial = new THREE.MeshPhongMaterial();
         cubeMaterial.map = texture;
-
-
-
-        var texture = THREE.ImageUtils.loadTexture("textures/wall2.jpg");
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(8,8);
-        var cubeMaterial = new THREE.MeshPhongMaterial();
-        cubeMaterial.map = texture;
-
-
 
         var cube = new THREE.Mesh(cubeGeometry15, cubeMaterial);
-
         cube.position.x = 448;
         cube.position.y = 0;
         cube.position.z = 32;
@@ -181,7 +141,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry15, cubeMaterial);
-
         cube.position.x = -448;
         cube.position.y = 0;
         cube.position.z = 32;
@@ -189,7 +148,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry06, cubeMaterial);
-
         cube.position.x = 224;
         cube.position.y = -448;
         cube.position.z = 32;
@@ -197,7 +155,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry06, cubeMaterial);
-
         cube.position.x = -224;
         cube.position.y = -448;
         cube.position.z = 32;
@@ -205,7 +162,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry013, cubeMaterial);
-
         cube.position.x = 0;
         cube.position.y = 448;
         cube.position.z = 32;
@@ -213,7 +169,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry3, cubeMaterial);
-
         cube.position.x = -320;
         cube.position.y = 320;
         cube.position.z = 32;
@@ -221,7 +176,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry6, cubeMaterial);
-
         cube.position.x = -192;
         cube.position.y = 160;
         cube.position.z = 32;
@@ -229,7 +183,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry4, cubeMaterial);
-
         cube.position.x = -64;
         cube.position.y = 288;
         cube.position.z = 32;
@@ -237,7 +190,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry11, cubeMaterial);
-
         cube.position.x = 64;
         cube.position.y = 0;
         cube.position.z = 32;
@@ -245,7 +197,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry5, cubeMaterial);
-
         cube.position.x = 192;
         cube.position.y = 256;
         cube.position.z = 32;
@@ -253,16 +204,13 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry6, cubeMaterial);
-
         cube.position.x = 320;
         cube.position.y = 160;
         cube.position.z = 32;
         collidableMeshList.push(cube);
         scene.add(cube);
 
-
         var cube = new THREE.Mesh(cubeGeometry4, cubeMaterial);
-
         cube.position.x = 320;
         cube.position.y = -224;
         cube.position.z = 32;
@@ -270,7 +218,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry2, cubeMaterial);
-
         cube.position.x = 192;
         cube.position.y = -160;
         cube.position.z = 32;
@@ -278,7 +225,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry5, cubeMaterial);
-
         cube.position.x = -64;
         cube.position.y = -192;
         cube.position.z = 32;
@@ -286,7 +232,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry2, cubeMaterial);
-
         cube.position.x = -192;
         cube.position.y = -160;
         cube.position.z = 32;
@@ -294,7 +239,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry6, cubeMaterial);
-
         cube.position.x = -320;
         cube.position.y = -160;
         cube.position.z = 32;
@@ -302,7 +246,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry02, cubeMaterial);
-
         cube.position.x = -352;
         cube.position.y = 128;
         cube.position.z = 32;
@@ -310,7 +253,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry03, cubeMaterial);
-
         cube.position.x = -64;
         cube.position.y = 64;
         cube.position.z = 32;
@@ -318,7 +260,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry03, cubeMaterial);
-
         cube.position.x = 192;
         cube.position.y = 0;
         cube.position.z = 32;
@@ -326,7 +267,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry03, cubeMaterial);
-
         cube.position.x = 192;
         cube.position.y = -320;
         cube.position.z = 32;
@@ -334,7 +274,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry03, cubeMaterial);
-
         cube.position.x = -192;
         cube.position.y = -320;
         cube.position.z = 32;
@@ -342,7 +281,6 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry1, cubeMaterial);
-
         cube.position.x = -128;
         cube.position.y = -128;
         cube.position.z = 32;
@@ -350,16 +288,11 @@
         scene.add(cube);
 
         var cube = new THREE.Mesh(cubeGeometry1, cubeMaterial);
-
         cube.position.x = -256;
         cube.position.y = 0;
         cube.position.z = 32;
         collidableMeshList.push(cube);
         scene.add(cube);
-
-
-
-
 
         var shape = THREE.SceneUtils.createMultiMaterialObject(
             new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
@@ -385,7 +318,6 @@
         shape2.position.z =30;
         scene.add( shape2 );
 
-
         var shape3 = THREE.SceneUtils.createMultiMaterialObject(
             new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
             multiMaterial );
@@ -394,7 +326,6 @@
         shape3.position.z =30;
         scene.add( shape3 );
 
-
         var shape4 = THREE.SceneUtils.createMultiMaterialObject(
             new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
             multiMaterial );
@@ -402,7 +333,6 @@
         shape4.position.y =384;
         shape4.position.z =30;
         scene.add( shape4 );
-
 
         var shape5 = THREE.SceneUtils.createMultiMaterialObject(
             new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
@@ -444,24 +374,22 @@
         shape9.position.z =30;
         scene.add( shape9 );
 
-
-
-
         // position and point the camera to the center of the scene
+
         camera.position.x = 0;
         camera.position.y = -1300;
         camera.position.z = 1100;
         camera.lookAt(new THREE.Vector3(10, 0, 0));
         //controls.update();
-
-
         // add spotlight for a bit of light
+
         var spotLight0 = new THREE.SpotLight(0xffffff);
         spotLight0.position.set(0,0,600);
         spotLight0.lookAt(plane);
         // scene.add(spotLight0);
 
         var pointColor = "#000000";
+
         var spotLight = new THREE.SpotLight(pointColor);
         spotLight.position.set(0,300,10);
         spotLight.castShadow = true;
@@ -470,7 +398,6 @@
         spotLight.shadowCameraFov = 130;
         spotLight.target = plane;
         spotLight.distance = 0;
-
         //  scene.add(spotLight);
 
         var light = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -478,18 +405,14 @@
         scene.add(light);
 
         controls.addEventListener( 'change', light_update ); // wraz ze zmianą kamery, zmienia się oświetlenie
-
-
         // add the output of the renderer to the html element
         $("#WebGL-output").append(renderer.domElement);
 
         // call the render function
         var step = 0;
-
         // used to determine the switch point for the light animation
         var invert = 1;
         var phase = 0;
-
 
         function light_update(){
             light.position.copy( camera.position );
@@ -511,7 +434,6 @@
             shape7.rotation.z -= speed;
             shape8.rotation.z += speed;
             shape9.rotation.z += speed;
-
             /*   shape.rotation.y += controls.rotationSpeed;
               shape.rotation.z += controls.rotationSpeed;
       */
@@ -526,7 +448,6 @@
             shape8.position.z = 30 + ( 5 * (Math.cos(step)));
             shape9.position.z = 30 + ( 5 * (Math.cos(step)));
             shape.position.z = 30 + ( 5 * (Math.cos(step)));
-
             stats.update();
             requestAnimationFrame(render);
             controls.update();
@@ -541,7 +462,6 @@
             var originPoint = mesh.position.clone();
             clearText();
             //var newposition= new Three.Vector3(distanceX,distanceY,0);
-
             for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++)
             {
                 if(distanceY==0)
@@ -550,14 +470,12 @@
                     var localVertex = mesh.geometry.vertices[vertexIndex].clone().setY(distanceY);
                 var globalVertex = localVertex.applyMatrix4( mesh.matrix );
                 var directionVector = (globalVertex.sub( mesh.position));
-
                 var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
                 var collisionResults = ray.intersectObjects( collidableMeshList );
                 if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
                     appendText(" Hit ");
                     return 1;
                     //mesh.position=originPoint;
-
                 }
             }
             return 0;
@@ -566,78 +484,56 @@
         function update()
         {
             keyboard.update();
-
             var moveDistance = 50 * clock.getDelta();
-
             if ( keyboard.down("left"))
                 if((collisionDetector(-18,0))==0)
                     mesh.translateX( -10 );
-
             if ( keyboard.down("right") )
                 if((collisionDetector(18,0))==0)
                     mesh.translateX(  10 );
-
             if ( keyboard.down("up") )
                 if((collisionDetector(0,18))==0)
                     mesh.translateY(  10 );
-
             if ( keyboard.down("down") )
                 if((collisionDetector(0,-18))==0)
                     mesh.translateY(  -10 );
-
             if ( keyboard.pressed("A") )
                 if((collisionDetector(-moveDistance-20,0))==0)
                     mesh.translateX( -moveDistance );
-
             if ( keyboard.pressed("D") )
                 if((collisionDetector(moveDistance+20,0))==0)
                     mesh.translateX(  moveDistance );
-
             if ( keyboard.pressed("W"))
                 if((collisionDetector(0,moveDistance+20))==0)
                     mesh.translateY(  moveDistance );
-
             if ( keyboard.pressed("S") )
                 if((collisionDetector(0,-moveDistance-20))==0)
                     mesh.translateY(  -moveDistance );
-
             if ( keyboard.down("R") )
                 mesh.material.color = new THREE.Color(0xff0000);
             if ( keyboard.up("R") )
                 mesh.material.color = new THREE.Color(0x0000ff);
-
             controls.update();
             stats.update();
         }
 
-
         function clearText()
         {   document.getElementById('message').innerHTML = '..........';   }
+
         function appendText(txt)
         {   document.getElementById('message').innerHTML += txt;   }
 
-
-
         function initStats() {
-
             var stats = new Stats();
-
             stats.setMode(0); // 0: fps, 1: ms
-
             // Align top-left
             stats.domElement.style.position = 'absolute';
             stats.domElement.style.left = '0px';
             stats.domElement.style.top = '0px';
-
             $("#Stats-output").append(stats.domElement);
-
             return stats;
         }
     });
-
-
 </script>
 </body>
 </html>
-
-
