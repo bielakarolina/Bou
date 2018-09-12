@@ -49,7 +49,7 @@ THREE.GLTFLoader = ( function () {
 
 			};
 
-			var loader = new THREE.FileLoader( scope.manager );
+			var loader = new THREE.FileLoader(scope.manager)    //FileLoader( scope.manager );
 
 			loader.setResponseType( 'arraybuffer' );
 
