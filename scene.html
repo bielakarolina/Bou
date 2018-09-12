@@ -63,9 +63,13 @@
 
         var scene = new THREE.Scene();
         var backgroundGeometry, backgroundScene;
-        var backgroundMaterial = new THREE.TextureLoader().load( 'textures/dark-s_nx.jpg' );
-        backgroundGeometry=new THREE.CubeGeometry(5000, 5000,2000);
-        backgroundScene = new THREE.Mesh(backgroundGeometry,new THREE.MeshPhongMaterial({map: backgroundMaterial, side: THREE.DoubleSide}));
+        var backgroundMaterial = new THREE.TextureLoader().load( 'textures/galaxy1.jpg' );
+        backgroundMaterial.wrapS = THREE.RepeatWrapping;
+        backgroundMaterial.wrapT = THREE.RepeatWrapping;
+        backgroundMaterial.repeat.set(1,1);
+        backgroundMaterial.needsUpdate = true;
+        backgroundGeometry=new THREE.CubeGeometry(4000, 3500,3000);
+        backgroundScene = new THREE.Mesh(backgroundGeometry,new THREE.MeshPhongMaterial({map: backgroundMaterial, side: THREE.BackSide}));
         scene.add(backgroundScene);
         // create a camera, which defines where we're looking at.
 
@@ -144,7 +148,7 @@
         scene.add(plane);
 
         var geometry = new THREE.SphereGeometry( 24, 16, 8 );
-        var meshmaterial = new THREE.TextureLoader().load('textures/transition3.png')
+        var meshmaterial = new THREE.TextureLoader().load('textures/metal.jpg')
         meshmaterial.wrapS = THREE.RepeatWrapping;
         meshmaterial.wrapT = THREE.RepeatWrapping;
         meshmaterial.repeat.set(1,1);
