@@ -24,7 +24,6 @@
     <script src="scripts/SceneUtils.js"></script>
 
 
-
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -46,41 +45,38 @@
 
 <!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
-    if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    if (!Detector.webgl) Detector.addGetWebGLMessage();
     // once everything is loaded, we run our Three.js stuff.
     var renderer;
     var mixers = [];
 
     $(function () {
-        var stopMovingLight = false;
+
         var keyboard = new KeyboardState();
         var clock = new THREE.Clock();
 
         var collidableMeshList = [];
-        // create a render and set the size
 
         var stats = initStats();
 
         var scene = new THREE.Scene();
+
+      //creating galaxy background
         var backgroundGeometry, backgroundScene;
-        var backgroundMaterial = new THREE.TextureLoader().load( 'textures/galaxy1.jpg' );
+        var backgroundMaterial = new THREE.TextureLoader().load('textures/galaxy1.jpg');
         backgroundMaterial.wrapS = THREE.RepeatWrapping;
         backgroundMaterial.wrapT = THREE.RepeatWrapping;
-        backgroundMaterial.repeat.set(1,1);
+        backgroundMaterial.repeat.set(1, 1);
         backgroundMaterial.needsUpdate = true;
-        backgroundGeometry=new THREE.CubeGeometry(4000, 3500,3000);
-        backgroundScene = new THREE.Mesh(backgroundGeometry,new THREE.MeshPhongMaterial({map: backgroundMaterial, side: THREE.BackSide}));
+
+        backgroundGeometry = new THREE.CubeGeometry(4000, 3500, 3000);
+        backgroundScene = new THREE.Mesh(backgroundGeometry, new THREE.MeshPhongMaterial({
+            map: backgroundMaterial,
+            side: THREE.BackSide
+        }));
         scene.add(backgroundScene);
-        // create a camera, which defines where we're looking at.
 
-
-        // loader = new THREE.BufferGeometryLoader();
-        // loader.load( 'textures/suzanne_buffergeometry.json', function ( geometry ) {
-        //     mesh1 = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xffffff, overdraw: 0.5 } ) );
-        //     mesh1.position.set(4,4,20);
-        //     scene.add( mesh1 );
-        // } );
-
+        //working only for one file, Parrot.glb
 
         // var loader = new THREE.GLTFLoader();
         // THREE.DRACOLoader.setDecoderPath( '/scripts/draco' );
@@ -92,24 +88,18 @@
         //     mesh1.position.x = 4;
         //     mesh1.position.z = 20;
         //
-        //     mesh1.needsUpdate = true; // cloning does not set this
+        //     mesh1.needsUpdate = true;
         //     scene.add( mesh1 );
-        //
-        //
-        //
         // },
         // function ( error ) {
         //
         //     console.log( 'An error happened' );
-        //
         // }
-        //
         // );
 
-        renderer = new THREE.WebGLRenderer( { antialias: true } );
-       // renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
         renderer.gammaInput = true;
         renderer.gammaOutput = true;
         renderer.shadowMap.enabled = true;
@@ -118,89 +108,80 @@
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
         camera.lookAt(scene.position);
 
-        // create a scene, that will hold all our elements such as objects, cameras and lights.
-
-        var controls = new THREE.OrbitControls( camera, renderer.domElement );
-       // controls.addEventListener( 'change', render );
-       //  controls.minDistance = 50;
-       //  controls.maxDistance = 300;
-       //  controls.enablePan = false;
-       //  controls.target.set( 80, 65, 20 );
-        // controls.update();
-
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         var maxAnisotropy = 5;
-        var manager = new THREE.LoadingManager();
-
 
         // create the ground plane
-        var floorTexture = new THREE.TextureLoader().load( 'textures/wall1.png' );
+        var floorTexture = new THREE.TextureLoader().load('textures/wall1.png');
         floorTexture.anisotropy = maxAnisotropy;
         floorTexture.wrapS = THREE.RepeatWrapping;
         floorTexture.wrapT = THREE.RepeatWrapping;
-        floorTexture.repeat.set(16,16);
+        floorTexture.repeat.set(15, 15);
         floorTexture.needsUpdate = true;
 
-        var planeMaterial = new THREE.MeshPhongMaterial({map: floorTexture, side:THREE.DoubleSide})
-        var planeGeometry = new THREE.PlaneGeometry(960,960, 20, 20);
+        var planeMaterial = new THREE.MeshPhongMaterial({map: floorTexture, side: THREE.DoubleSide})
+        var planeGeometry = new THREE.PlaneGeometry(960, 960, 20, 20);
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.position.y = 0
         scene.add(plane);
 
-        var geometry = new THREE.SphereGeometry( 24, 16, 8 );
+        //moving ball, main character
+        var geometry = new THREE.SphereGeometry(24, 16, 8);
         var meshmaterial = new THREE.TextureLoader().load('textures/metal.jpg')
         meshmaterial.wrapS = THREE.RepeatWrapping;
         meshmaterial.wrapT = THREE.RepeatWrapping;
-        meshmaterial.repeat.set(1,1);
+        meshmaterial.repeat.set(1, 1);
         meshmaterial.needsUpdate = true;
+
         var material = new THREE.MeshPhongMaterial({map: meshmaterial})
-        mesh = new THREE.Mesh( geometry, material );
-        mesh.position.set(4,4,20);
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(4, 4, 20);
         scene.add(mesh);
 
 
         var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
-        var texture = new THREE.TextureLoader().load("textures/wall2.jpg");
+        var texture = new THREE.TextureLoader().load("textures/wall3.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(8,8);
+        texture.repeat.set(8, 8);
 
         var cubeMaterial = new THREE.MeshPhongMaterial();
         cubeMaterial.map = texture;
 
         var collidableMeshList = [];
 
-        var darkMaterial = new THREE.MeshBasicMaterial( { color: 0xff0040 } );
-        var darkMaterial2 = new THREE.MeshBasicMaterial( { color: 0xf00040 } );
+        var darkMaterial = new THREE.MeshBasicMaterial({color: 0xff0040});
+        var darkMaterial2 = new THREE.MeshBasicMaterial({color: 0xf00040});
 
-        var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0xb3b3b3, wireframe: true} );
-        var multiMaterial = [ darkMaterial2,darkMaterial,wireframeMaterial ];
+        var wireframeMaterial = new THREE.MeshBasicMaterial({color: 0xb3b3b3, wireframe: true});
+        var multiMaterial = [darkMaterial2, darkMaterial, wireframeMaterial];
 
-        var cubeGeometry1 = new THREE.CubeGeometry(64,64,64);
-        var cubeGeometry2 = new THREE.CubeGeometry(64,128,64);
-        var cubeGeometry3 = new THREE.CubeGeometry(64,192,64);
-        var cubeGeometry4 = new THREE.CubeGeometry(64,256,64);
-        var cubeGeometry5 = new THREE.CubeGeometry(64,320,64);
-        var cubeGeometry6 = new THREE.CubeGeometry(64,384,64);
-        var cubeGeometry11= new THREE.CubeGeometry(64,704,64);
-        var cubeGeometry15= new THREE.CubeGeometry(64,960,64);
-        var cubeGeometry02= new THREE.CubeGeometry(128,64,64);
-        var cubeGeometry03= new THREE.CubeGeometry(192,64,64);
-        var cubeGeometry06= new THREE.CubeGeometry(384,64,64);
-        var cubeGeometry013= new THREE.CubeGeometry(832,64,64);
+        var cubeGeometry1 = new THREE.CubeGeometry(64, 64, 64);
+        var cubeGeometry2 = new THREE.CubeGeometry(64, 128, 64);
+        var cubeGeometry3 = new THREE.CubeGeometry(64, 192, 64);
+        var cubeGeometry4 = new THREE.CubeGeometry(64, 256, 64);
+        var cubeGeometry5 = new THREE.CubeGeometry(64, 320, 64);
+        var cubeGeometry6 = new THREE.CubeGeometry(64, 384, 64);
+        var cubeGeometry11 = new THREE.CubeGeometry(64, 704, 64);
+        var cubeGeometry15 = new THREE.CubeGeometry(64, 960, 64);
+        var cubeGeometry02 = new THREE.CubeGeometry(128, 64, 64);
+        var cubeGeometry03 = new THREE.CubeGeometry(192, 64, 64);
+        var cubeGeometry06 = new THREE.CubeGeometry(384, 64, 64);
+        var cubeGeometry013 = new THREE.CubeGeometry(832, 64, 64);
 
-        var texture = new THREE.TextureLoader().load("textures/wall2.jpg");
+        var texture = new THREE.TextureLoader().load("textures/wall3.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(8,8);
+        texture.repeat.set(8, 8);
 
         var cubeMaterial = new THREE.MeshPhongMaterial();
         cubeMaterial.map = texture;
 
-        var texture = new THREE.TextureLoader().load("textures/wall2.jpg");
+        var texture = new THREE.TextureLoader().load("textures/wall3.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(8,8);
+        texture.repeat.set(8, 8);
 
         var cubeMaterial = new THREE.MeshPhongMaterial();
         cubeMaterial.map = texture;
@@ -367,84 +348,84 @@
         scene.add(cube);
 
         var shape = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape.position.x =0;
-        shape.position.y =0;
-        shape.position.z =30;
-        scene.add( shape );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape.position.x = 0;
+        shape.position.y = 0;
+        shape.position.z = 30;
+        scene.add(shape);
 
         var shape1 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape1.position.x =-384;
-        shape1.position.y =384;
-        shape1.position.z =30;
-        scene.add( shape1 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape1.position.x = -384;
+        shape1.position.y = 384;
+        shape1.position.z = 30;
+        scene.add(shape1);
 
         var shape2 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape2.position.x =-128;
-        shape2.position.y =128;
-        shape2.position.z =30;
-        scene.add( shape2 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape2.position.x = -128;
+        shape2.position.y = 128;
+        shape2.position.z = 30;
+        scene.add(shape2);
 
         var shape3 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape3.position.x =128;
-        shape3.position.y =64;
-        shape3.position.z =30;
-        scene.add( shape3 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape3.position.x = 128;
+        shape3.position.y = 64;
+        shape3.position.z = 30;
+        scene.add(shape3);
 
         var shape4 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape4.position.x =384;
-        shape4.position.y =384;
-        shape4.position.z =30;
-        scene.add( shape4 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape4.position.x = 384;
+        shape4.position.y = 384;
+        shape4.position.z = 30;
+        scene.add(shape4);
 
         var shape5 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape5.position.x =-256;
-        shape5.position.y =64;
-        shape5.position.z =30;
-        scene.add( shape5 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape5.position.x = -256;
+        shape5.position.y = 64;
+        shape5.position.z = 30;
+        scene.add(shape5);
 
         var shape6 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape6.position.x =-128;
-        shape6.position.y =-192;
-        shape6.position.z =30;
-        scene.add( shape6 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape6.position.x = -128;
+        shape6.position.y = -192;
+        shape6.position.z = 30;
+        scene.add(shape6);
 
         var shape7 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape7.position.x =128;
-        shape7.position.y =-256;
-        shape7.position.z =30;
-        scene.add( shape7 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape7.position.x = 128;
+        shape7.position.y = -256;
+        shape7.position.z = 30;
+        scene.add(shape7);
 
         var shape8 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape8.position.x =-384;
-        shape8.position.y =-384;
-        shape8.position.z =30;
-        scene.add( shape8 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape8.position.x = -384;
+        shape8.position.y = -384;
+        shape8.position.z = 30;
+        scene.add(shape8);
 
         var shape9 = THREE.SceneUtils.createMultiMaterialObject(
-            new THREE.IcosahedronGeometry( 15, 0 ), // radius, subdivisions
-            multiMaterial );
-        shape9.position.x =384;
-        shape9.position.y =-384;
-        shape9.position.z =30;
-        scene.add( shape9 );
+            new THREE.IcosahedronGeometry(15, 0), // radius, subdivisions
+            multiMaterial);
+        shape9.position.x = 384;
+        shape9.position.y = -384;
+        shape9.position.z = 30;
+        scene.add(shape9);
 
         // // position and point the camera to the center of the scene
 
@@ -456,75 +437,75 @@
         // add spotlight for a bit of light
 
 
-        var light1 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light1.position.x =0;
-        light1.position.y =0;
-        light1.position.z =30;
-        scene.add( light1 );
+        var light1 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light1.position.x = 0;
+        light1.position.y = 0;
+        light1.position.z = 30;
+        scene.add(light1);
 
-        var light2 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light2.position.x =-384;
-        light2.position.y =384;
-        light2.position.z =30;
-        scene.add( light2 );
+        var light2 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light2.position.x = -384;
+        light2.position.y = 384;
+        light2.position.z = 30;
+        scene.add(light2);
 
-        var light3 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light3.position.x =-128;
-        light3.position.y =128;
-        light3.position.z =30;
-        scene.add( light3 );
+        var light3 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light3.position.x = -128;
+        light3.position.y = 128;
+        light3.position.z = 30;
+        scene.add(light3);
 
-        var light4 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light4.position.x =128;
-        light4.position.y =64;
-        light4.position.z =30;
-        scene.add( light4 );
+        var light4 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light4.position.x = 128;
+        light4.position.y = 64;
+        light4.position.z = 30;
+        scene.add(light4);
 
-        var light5 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light5.position.x =384;
-        light5.position.y =384;
-        light5.position.z =30;
-        scene.add( light5 );
+        var light5 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light5.position.x = 384;
+        light5.position.y = 384;
+        light5.position.z = 30;
+        scene.add(light5);
 
-        var light6 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light6.position.x =-256;
-        light6.position.y =64;
-        light6.position.z =30;
-        scene.add( light6 );
+        var light6 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light6.position.x = -256;
+        light6.position.y = 64;
+        light6.position.z = 30;
+        scene.add(light6);
 
-        var light7 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light7.position.x =-128;
-        light7.position.y =-192;
-        light7.position.z =30;
-        scene.add( light7 );
+        var light7 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light7.position.x = -128;
+        light7.position.y = -192;
+        light7.position.z = 30;
+        scene.add(light7);
 
-        var light8 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light8.position.x =128;
-        light8.position.y =-256;
-        light8.position.z =30;
-        scene.add( light8 );
+        var light8 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light8.position.x = 128;
+        light8.position.y = -256;
+        light8.position.z = 30;
+        scene.add(light8);
 
-        var light9 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light9.position.x =-384;
-        light9.position.y =-384;
-        light9.position.z =30;
-        scene.add( light9 );
+        var light9 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light9.position.x = -384;
+        light9.position.y = -384;
+        light9.position.z = 30;
+        scene.add(light9);
 
-        var light10 = new THREE.PointLight( 0xf00040, 5, 60 ,2)
-        light10.position.x =384;
-        light10.position.y =-384;
-        light10.position.z =30;
-        scene.add( light2 );
+        var light10 = new THREE.PointLight(0xf00040, 5, 60, 2)
+        light10.position.x = 384;
+        light10.position.y = -384;
+        light10.position.z = 30;
+        scene.add(light2);
 
         var spotLight0 = new THREE.SpotLight(0xffffff);
-        spotLight0.position.set(0,0,600);
+        spotLight0.position.set(0, 0, 600);
         spotLight0.lookAt(plane);
         // scene.add(spotLight0);
 
         var pointColor = "#000000";
 
         var spotLight = new THREE.SpotLight(pointColor);
-        spotLight.position.set(0,300,10);
+        spotLight.position.set(0, 300, 10);
         spotLight.castShadow = true;
         spotLight.shadow.camera.near = 2;
         spotLight.shadow.camera.far = 200;
@@ -533,36 +514,30 @@
         spotLight.distance = 0;
         //  scene.add(spotLight);
 
-        var light = new THREE.DirectionalLight( 0xffffff, 1 );
+        var light = new THREE.DirectionalLight(0xffffff, 1);
         light.position = camera.position;
         scene.add(light);
-        controls.addEventListener( 'change', light_update ); // wraz ze zmianą kamery, zmienia się oświetlenie
+        controls.addEventListener('change', light_update); // wraz ze zmianą kamery, zmienia się oświetlenie
 
-        var sphere = new THREE.SphereBufferGeometry( 3, 16, 8 );
+        var sphere = new THREE.SphereBufferGeometry(3, 16, 8);
 
-        var light11 = new THREE.PointLight( 0xff0040, 4, 50 );
-        light11.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040 } ) ) );
-        light11.position.copy( mesh.position );
-        scene.add( light11 );
+        var light11 = new THREE.PointLight(0xff0040, 4, 50);
+        light11.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0xff0040})));
+        light11.position.copy(mesh.position);
+        scene.add(light11);
 
-        var light12 = new THREE.PointLight( 0x80ff80, 4, 50 );
-        light12.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x80ff80 } ) ) );
-        light12.position.copy( mesh.position );
-        scene.add( light12 );
+        var light12 = new THREE.PointLight(0x80ff80, 4, 50);
+        light12.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0x80ff80})));
+        light12.position.copy(mesh.position);
+        scene.add(light12);
 
-        var light13 = new THREE.PointLight( 0xffaa00, 4, 50 );
-        light13.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffaa00 } ) ) );
-        light13.position.copy( mesh.position );
-        scene.add( light13 );
+        var light13 = new THREE.PointLight(0xffaa00, 4, 50);
+        light13.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0xffaa00})));
+        light13.position.copy(mesh.position);
+        scene.add(light13);
 
-        var PI2 = Math.PI * 2;
-        var program = function ( context ) {
-            context.beginPath();
-            context.arc( 0, 0, 0.5, 0, PI2, true );
-            context.fill();
-        };
-        controls.addEventListener( 'change', light_update ); // wraz ze zmianą kamery, zmienia się oświetlenie
-        controls.addEventListener( 'change', light_update1 ); // wraz ze zmianą kamery, zmienia się oświetlenie
+        controls.addEventListener('change', light_update); // wraz ze zmianą kamery, zmienia się oświetlenie
+        controls.addEventListener('change', light_update1); // wraz ze zmianą kamery, zmienia się oświetlenie
 
 
         // add the output of the renderer to the html element
@@ -574,17 +549,18 @@
         var invert = 1;
         var phase = 0;
 
-        function light_update(){
-            light.position.copy( camera.position );
-        }
-        function light_update1(){
-            light11.position.copy( mesh.position );
-            light11.position.x+=5;
-            light11.position.y+=5;
-            light11.position.z+=5;
+        function light_update() {
+            light.position.copy(camera.position);
         }
 
-        var step =0;
+        function light_update1() {
+            light11.position.copy(mesh.position);
+            light11.position.x += 5;
+            light11.position.y += 5;
+            light11.position.z += 5;
+        }
+
+        var step = 0;
         var speed = 0.02;
 
         function render() {
@@ -606,42 +582,42 @@
               shape.rotation.z += controls.rotationSpeed;
       */
             step += 0.05;
-            shape1.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape2.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape3.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape4.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape5.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape6.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape7.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape8.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape9.position.z = 30 + ( 5 * (Math.cos(step)));
-            shape.position.z = 30 + ( 5 * (Math.cos(step)));
+            shape1.position.z = 30 + (5 * (Math.cos(step)));
+            shape2.position.z = 30 + (5 * (Math.cos(step)));
+            shape3.position.z = 30 + (5 * (Math.cos(step)));
+            shape4.position.z = 30 + (5 * (Math.cos(step)));
+            shape5.position.z = 30 + (5 * (Math.cos(step)));
+            shape6.position.z = 30 + (5 * (Math.cos(step)));
+            shape7.position.z = 30 + (5 * (Math.cos(step)));
+            shape8.position.z = 30 + (5 * (Math.cos(step)));
+            shape9.position.z = 30 + (5 * (Math.cos(step)));
+            shape.position.z = 30 + (5 * (Math.cos(step)));
 
-            light11.position.copy( mesh.position );
-            light11.position.x += ( 20 * (Math.cos(time)));
-            light11.position.z += 40+( 20 * (Math.cos(time)));
-            light11.rotation.y += 10+( 20 * (Math.cos(time)));
-            light11.rotation.z += 30+( 20 * (Math.cos(time)));
-            light11.position.z += 10+( 20 * (Math.cos(step)));
+            light11.position.copy(mesh.position);
+            light11.position.x += (20 * (Math.cos(time)));
+            light11.position.z += 40 + (20 * (Math.cos(time)));
+            light11.rotation.y += 10 + (20 * (Math.cos(time)));
+            light11.rotation.z += 30 + (20 * (Math.cos(time)));
+            light11.position.z += 10 + (20 * (Math.cos(step)));
 
 
-            light12.position.copy( mesh.position );
-            light12.position.y += ( 20 * (Math.cos(step)));
-            light12.position.z += 40+( 20 * (Math.cos(step)));
-            light12.rotation.x += 10+( 20 * (Math.cos(time)));
-            light12.rotation.z += 30+( 20 * (Math.cos(time)));
-            light12.rotation.y += 10+( 20 * (Math.cos(time)));
+            light12.position.copy(mesh.position);
+            light12.position.y += (20 * (Math.cos(step)));
+            light12.position.z += 40 + (20 * (Math.cos(step)));
+            light12.rotation.x += 10 + (20 * (Math.cos(time)));
+            light12.rotation.z += 30 + (20 * (Math.cos(time)));
+            light12.rotation.y += 10 + (20 * (Math.cos(time)));
 
-            light13.position.copy( mesh.position );
-            light13.position.y += ( 20 * (Math.cos(time)));
-            light13.rotation.z += 30+( 20 * (Math.cos(time)));
-            light13.rotation.y += 30+( 20 * (Math.cos(time)));
-            light13.rotation.x += 50+( 20 * (Math.cos(time)));
-            light13.rotation.z += 50+( 20 * (Math.cos(time)));
-            light13.position.z += -5+( 50 * (Math.cos(step)));
+            light13.position.copy(mesh.position);
+            light13.position.y += (20 * (Math.cos(time)));
+            light13.rotation.z += 30 + (20 * (Math.cos(time)));
+            light13.rotation.y += 30 + (20 * (Math.cos(time)));
+            light13.rotation.x += 50 + (20 * (Math.cos(time)));
+            light13.rotation.z += 50 + (20 * (Math.cos(time)));
+            light13.position.z += -5 + (50 * (Math.cos(step)));
 
-            for ( var i = 0; i < mixers.length; i ++ ) {
-                mixers[ i ].update( delta );
+            for (var i = 0; i < mixers.length; i++) {
+                mixers[i].update(delta);
 
             }
 
@@ -655,22 +631,21 @@
 
         render();
 
-        function collisionDetector(distanceX, distanceY){
-            var collision=0;
+        function collisionDetector(distanceX, distanceY) {
+            var collision = 0;
             var originPoint = mesh.position.clone();
             clearText();
             //var newposition= new Three.Vector3(distanceX,distanceY,0);
-            for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++)
-            {
-                if(distanceY==0)
+            for (var vertexIndex = 0; vertexIndex < mesh.geometry.vertices.length; vertexIndex++) {
+                if (distanceY == 0)
                     var localVertex = mesh.geometry.vertices[vertexIndex].clone().setX(distanceX);
                 else
                     var localVertex = mesh.geometry.vertices[vertexIndex].clone().setY(distanceY);
-                var globalVertex = localVertex.applyMatrix4( mesh.matrix );
-                var directionVector = (globalVertex.sub( mesh.position));
-                var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-                var collisionResults = ray.intersectObjects( collidableMeshList );
-                if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
+                var globalVertex = localVertex.applyMatrix4(mesh.matrix);
+                var directionVector = (globalVertex.sub(mesh.position));
+                var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+                var collisionResults = ray.intersectObjects(collidableMeshList);
+                if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
                     appendText(" Hit ");
                     return 1;
                     //mesh.position=originPoint;
@@ -680,48 +655,48 @@
         }
 
 
-
-        function update()
-        {
+        function update() {
             keyboard.update();
             var moveDistance = 1000 * clock.getDelta();
-            if ( keyboard.down("left"))
-                if((collisionDetector(-18,0))==0)
-                    mesh.translateX( -10 );
-            if ( keyboard.down("right") )
-                if((collisionDetector(18,0))==0)
-                    mesh.translateX(  10 );
-            if ( keyboard.down("up") )
-                if((collisionDetector(0,18))==0)
-                    mesh.translateY(  10 );
-            if ( keyboard.down("down") )
-                if((collisionDetector(0,-18))==0)
-                    mesh.translateY(  -10 );
-            if ( keyboard.pressed("A") )
-                if((collisionDetector(-moveDistance-20,0))==0)
-                    mesh.translateX( -moveDistance );
-            if ( keyboard.pressed("D") )
-                if((collisionDetector(moveDistance+20,0))==0)
-                    mesh.translateX(  moveDistance );
-            if ( keyboard.pressed("W"))
-                if((collisionDetector(0,moveDistance+20))==0)
-                    mesh.translateY(  moveDistance );
-            if ( keyboard.pressed("S") )
-                if((collisionDetector(0,-moveDistance-20))==0)
-                    mesh.translateY(  -moveDistance );
-            if ( keyboard.down("R") )
+            if (keyboard.down("left"))
+                if ((collisionDetector(-18, 0)) == 0)
+                    mesh.translateX(-10);
+            if (keyboard.down("right"))
+                if ((collisionDetector(18, 0)) == 0)
+                    mesh.translateX(10);
+            if (keyboard.down("up"))
+                if ((collisionDetector(0, 18)) == 0)
+                    mesh.translateY(10);
+            if (keyboard.down("down"))
+                if ((collisionDetector(0, -18)) == 0)
+                    mesh.translateY(-10);
+            if (keyboard.pressed("A"))
+                if ((collisionDetector(-moveDistance - 20, 0)) == 0)
+                    mesh.translateX(-moveDistance);
+            if (keyboard.pressed("D"))
+                if ((collisionDetector(moveDistance + 20, 0)) == 0)
+                    mesh.translateX(moveDistance);
+            if (keyboard.pressed("W"))
+                if ((collisionDetector(0, moveDistance + 20)) == 0)
+                    mesh.translateY(moveDistance);
+            if (keyboard.pressed("S"))
+                if ((collisionDetector(0, -moveDistance - 20)) == 0)
+                    mesh.translateY(-moveDistance);
+            if (keyboard.down("R"))
                 mesh.material.color = new THREE.Color(0xff0000);
-            if ( keyboard.up("R") )
+            if (keyboard.up("R"))
                 mesh.material.color = new THREE.Color(0x0000ff);
             controls.update();
             stats.update();
         }
 
-        function clearText()
-        {   document.getElementById('message').innerHTML = '..........';   }
+        function clearText() {
+            document.getElementById('message').innerHTML = '..........';
+        }
 
-        function appendText(txt)
-        {   document.getElementById('message').innerHTML += txt;   }
+        function appendText(txt) {
+            document.getElementById('message').innerHTML += txt;
+        }
 
         function initStats() {
             var stats = new Stats();
