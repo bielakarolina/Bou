@@ -66,10 +66,10 @@
         var backgroundMaterial = new THREE.TextureLoader().load('textures/galaxy1.jpg');
         backgroundMaterial.wrapS = THREE.RepeatWrapping;
         backgroundMaterial.wrapT = THREE.RepeatWrapping;
-        backgroundMaterial.repeat.set(1, 1);
+        backgroundMaterial.repeat.set(4, 4);
         backgroundMaterial.needsUpdate = true;
 
-        backgroundGeometry = new THREE.CubeGeometry(4000, 3500, 3000);
+        backgroundGeometry = new THREE.SphereGeometry(4000, 8, 8);
         backgroundScene = new THREE.Mesh(backgroundGeometry, new THREE.MeshPhongMaterial({
             map: backgroundMaterial,
             side: THREE.BackSide
@@ -497,9 +497,9 @@
         light10.position.z = 30;
         scene.add(light2);
 
-        var spotLight0 = new THREE.SpotLight(0xffffff);
-        spotLight0.position.set(0, 0, 600);
-        spotLight0.lookAt(plane);
+        // var spotLight0 = new THREE.SpotLight(0xffffff);
+        // spotLight0.position.set(0, 0, 600);
+        // spotLight0.lookAt(plane);
         // scene.add(spotLight0);
 
         var pointColor = "#000000";
@@ -512,12 +512,12 @@
         spotLight.shadow.camera.fov = 130;
         spotLight.target = plane;
         spotLight.distance = 0;
-        //  scene.add(spotLight);
+         scene.add(spotLight);
 
-        var light = new THREE.DirectionalLight(0xffffff, 1);
+        var light = new THREE.DirectionalLight(0xffffff, 0.5);
         light.position = camera.position;
         scene.add(light);
-        controls.addEventListener('change', light_update); // wraz ze zmianą kamery, zmienia się oświetlenie
+        // controls.addEventListener('change', light_update); // wraz ze zmianą kamery, zmienia się oświetlenie
 
         var sphere = new THREE.SphereBufferGeometry(3, 16, 8);
 
@@ -535,6 +535,11 @@
         light13.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0xffaa00})));
         light13.position.copy(mesh.position);
         scene.add(light13);
+
+        var light14 = new THREE.DirectionalLight(0xffffff, 0.5);
+       // light14.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0xffaa00})));
+        light14.position.copy(backgroundScene);
+        scene.add(light14);
 
         controls.addEventListener('change', light_update); // wraz ze zmianą kamery, zmienia się oświetlenie
         controls.addEventListener('change', light_update1); // wraz ze zmianą kamery, zmienia się oświetlenie
