@@ -76,6 +76,7 @@
         }));
         scene.add(backgroundScene);
 
+
         //working only for one file, Parrot.glb
 
         // var loader = new THREE.GLTFLoader();
@@ -138,6 +139,15 @@
         mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(4, 4, 20);
         scene.add(mesh);
+
+
+        // var loader = new THREE.ThreeMFLoader();
+        // loader.load( 'textures/Ghost.3mf', function ( object ) {
+        //     object.position.copy(mesh);
+        //     scene.add( object );
+        //     renderer.render( scene, camera );
+        //
+        // } );
 
 
         var cubeGeometry = new THREE.CubeGeometry(40, 40, 40);
